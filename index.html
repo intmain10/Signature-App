@@ -20,6 +20,12 @@
             <input type="color" id="color-picker" value="#000000">
             <input type="file" id="image-upload" accept="image/*">
 
+            <label for="font-picker">Font:</label>
+            <select id="font-picker">
+                <option value="Arial">Arial</option>
+                <option value="Times New Roman">Times New Roman</option>
+                <option value="Courier New">Courier New</option>
+            </select>
 
             <button id="clear-btn">Clear</button>
             <button id="save-btn">Save Signature</button>
@@ -31,6 +37,86 @@
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.5.0/fabric.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
-    <script src="script.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const canvas = new fabric.Canvas('signature-canvas', {
+                isDrawingMode: true,
+                backgroundColor: 'white',
+                width: 800,
+                height: 600,
+            });
+
+            const penType = document.getElementById('pen-type');
+            const colorPicker = document.getElementById('color-picker');
+            const imageUpload = document.getElementById('image-upload');
+            const fontPicker = document.getElementById('font-picker');
+
+            penType.addEventListener('change', () => {
+                canvas.freeDrawingBrush.width = parseInt(penType.value);
+            });
+
+            colorPicker.addEventListener('change', () => {
+                canvas.freeDrawingBrush.color = colorPicker.value;
+            });
+
+            imageUpload.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                        const img = new Image();
+                        img.onload = () => {
+                            canvas.setBackgroundImage(new fabric.Image(img), canvas.renderAll.bind(canvas));
+                        };
+                        img.src = reader.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            fontPicker.addEventListener('change', () => {
+                const selectedFont = fontPicker.value;
+                canvas.freeDrawingBrush.fontFamily = selectedFont;
+            });
+
+            const clearBtn = document.getElementById('clear-btn');
+            const saveBtn = document.getElementById('save-btn');
+            const downloadImgBtn = document.getElementById('download-img-btn');
+            const downloadPdfBtn = document.getElementById('download-pdf-btn');
+            const resultImg = document.getElementById('result');
+
+            clearBtn.addEventListener('click', () => {
+                canvas.clear();
+                canvas.backgroundColor = 'white';
+            });
+
+            saveBtn.addEventListener('click', async () => {
+                const dataURL = canvas.toDataURL({
+                    format: 'jpeg',
+                    quality: 1.0 // Maximum quality
+                });
+                resultImg.src = dataURL;
+                resultImg.style.display = 'block';
+            });
+
+            downloadImgBtn.addEventListener('click', () => {
+                const link = document.createElement('a');
+                link.href = resultImg.src;
+                link.download = 'signature.jpg'; // Set file name to .jpg extension
+                link.click();
+            });
+
+            downloadPdfBtn.addEventListener('click', () => {
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF();
+                const image = new Image();
+                image.src = resultImg.src;
+                image.onload = () => {
+                    pdf.addImage(image, 'JPEG', 10, 10, 180, 160); // Use 'JPEG' format
+                    pdf.save('signature.pdf');
+                };
+            });
+        });
+    </script>
 </body>
 </html>
