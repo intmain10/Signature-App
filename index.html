@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signature App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="controls">
+            <label for="pen-type">Pen Type:</label>
+            <select id="pen-type">
+                <option value="1">Thin</option>
+                <option value="3">Medium</option>
+                <option value="5">Thick</option>
+            </select>
+
+            <label for="color-picker">Pen Color:</label>
+            <input type="color" id="color-picker" value="#000000">
+            <input type="file" id="image-upload" accept="image/*">
+
+
+            <button id="clear-btn">Clear</button>
+            <button id="save-btn">Save Signature</button>
+            <button id="download-img-btn">Download as Image</button>
+            <button id="download-pdf-btn">Download as PDF</button>
+        </div>
+        <canvas id="signature-canvas"></canvas>
+        <img id="result" alt="Signature Result" style="display:none;">
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.5.0/fabric.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
